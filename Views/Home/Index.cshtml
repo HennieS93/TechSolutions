@@ -1,8 +1,39 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">TechSolutions</h1>
+        <p class="lead">
+            Secure Customer Data Management System
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">System Overview</h5>
+                    <p class="card-text">
+                        This application allows authorised users to securely manage customer information.
+                    </p>
+
+                    <ul>
+                        <li>Customer management (Create, View, Update, Delete)</li>
+                        <li>Soft delete to preserve data integrity</li>
+                        <li>Audit logging for all customer changes</li>
+                    </ul>
+
+                    <div class="mt-4 text-center">
+                        <a asp-controller="Customers"
+                           asp-action="Index"
+                           class="btn btn-primary btn-lg">
+                            Manage Customers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

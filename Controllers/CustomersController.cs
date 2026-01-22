@@ -22,10 +22,13 @@ namespace TechSolutions.Web.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            var customers = await _context.Customers
+    .Where(c => c.IsActive)
+    .ToListAsync();
+            return View(customers);
         }
 
-        // GET: Customers/Details/5
+        // GET: Customers Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,19 +46,17 @@ namespace TechSolutions.Web.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Customers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,SurName,Email,Phone,IsActive")] Customer customer)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,SurName,DateOfBirth,Email,Phone,IsActive")] Customer customer)
         {
+              customer.IsActive = true;
             if (ModelState.IsValid)
             {
                 _context.Add(customer);
@@ -65,7 +66,7 @@ namespace TechSolutions.Web.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Edit/5
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,42 +82,41 @@ namespace TechSolutions.Web.Controllers
             return View(customer);
         }
 
-        // POST: Customers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,SurName,Email,Phone,IsActive")] Customer customer)
-        {
-            if (id != customer.ID)
-            {
-                return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerExists(customer.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customer);
-        }
+      [HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Edit(int id, Customer model)
+{
+    if (id != model.ID)
+    {
+        return NotFound();
+    }
 
-        // GET: Customers/Delete/5
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    var customer = await _context.Customers.FindAsync(id);
+    if (customer == null)
+    {
+        return NotFound();
+    }
+
+
+    customer.FirstName = model.FirstName;
+    customer.SurName = model.SurName;
+    customer.DateOfBirth = model.DateOfBirth;
+    customer.Email = model.Email;
+    customer.Phone = model.Phone;
+
+
+
+    await _context.SaveChangesAsync();
+    return RedirectToAction(nameof(Index));
+}
+
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,7 +125,7 @@ namespace TechSolutions.Web.Controllers
             }
 
             var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.ID == id && m.IsActive);
             if (customer == null)
             {
                 return NotFound();
@@ -134,20 +134,27 @@ namespace TechSolutions.Web.Controllers
             return View(customer);
         }
 
-        // POST: Customers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-            }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+[HttpPost, ActionName("Delete")]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> DeleteConfirmed(int id)
+{
+    var customer = await _context.Customers.FindAsync(id);
+
+    if (customer == null)
+    {
+        return NotFound();
+    }
+
+
+    customer.IsActive = false;
+
+    _context.Customers.Update(customer);
+    await _context.SaveChangesAsync();
+
+    return RedirectToAction(nameof(Index));
+}
+
 
         private bool CustomerExists(int id)
         {

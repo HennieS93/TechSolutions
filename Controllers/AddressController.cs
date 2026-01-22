@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TechSolutions.Web.Data;
 using TechSolutions.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TechSolutions.Web.Controllers
 {
+    [Authorize]
     public class AddressesController : Controller
     {
         private readonly AppDbContext _context;

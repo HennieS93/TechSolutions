@@ -24,6 +24,6 @@ namespace TechSolutions.Web.Models
         public string PostalCode { get; set; } = string.Empty;
 
         // Navigation
-        public Customer Customer { get; set; } = null!;
+        public Customer? Customer { get; set; } = null!;
     }
 }

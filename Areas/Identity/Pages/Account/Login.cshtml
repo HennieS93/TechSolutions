@@ -24,10 +24,23 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Input.Password" class="form-label"></label>
-                        <input asp-for="Input.Password" class="form-control" />
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                    </div>
+    <label asp-for="Input.Password" class="form-label"></label>
+
+    <div class="input-group">
+        <input asp-for="Input.Password"
+               class="form-control"
+               id="passwordField" />
+
+        <button type="button"
+                class="btn btn-outline-secondary"
+                onclick="togglePassword('passwordField', this)">
+            👁
+        </button>
+    </div>
+
+    <span asp-validation-for="Input.Password" class="text-danger"></span>
+</div>
+
 
                     <div class="form-check mb-3">
                         <input asp-for="Input.RememberMe" class="form-check-input" />
@@ -59,3 +72,18 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script>
+    function togglePassword(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            btn.textContent = "🙈";
+        } else {
+            input.type = "password";
+            btn.textContent = "👁";
+        }
+    }
+</script>
+

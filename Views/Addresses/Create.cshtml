@@ -2,7 +2,12 @@
 
 <h3>Add Address</h3>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create"
+      asp-controller="Addresses"
+      method="post">
+
+    @Html.AntiForgeryToken()
+
     <input type="hidden" asp-for="CustomerID" />
 
     <div class="mb-3">
@@ -16,6 +21,13 @@
     </div>
 
     <div class="mb-3">
+    <label asp-for="Country"></label>
+    <input asp-for="Country" class="form-control" />
+    <span asp-validation-for="Country" class="text-danger"></span>
+</div>
+
+
+    <div class="mb-3">
         <label asp-for="City"></label>
         <input asp-for="City" class="form-control" />
     </div>
@@ -25,8 +37,10 @@
         <input asp-for="PostalCode" class="form-control" />
     </div>
 
-    <button class="btn btn-primary">Save</button>
+    <button type="submit" class="btn btn-primary">Save</button>
+
     <a asp-action="ByCustomer"
+       asp-controller="Addresses"
        asp-route-customerId="@Model.CustomerID"
        class="btn btn-secondary">
         Cancel

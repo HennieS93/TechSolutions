@@ -21,7 +21,6 @@ namespace TechSolutions.Web.Controllers
             _context = context;
         }
 
-        // GET: Customers
         public async Task<IActionResult> Index()
         {
             var customers = await _context.Customers
@@ -30,7 +29,6 @@ namespace TechSolutions.Web.Controllers
             return View(customers);
         }
 
-        // GET: Customers Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -54,19 +52,46 @@ namespace TechSolutions.Web.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,SurName,DateOfBirth,Email,Phone,IsActive")] Customer customer)
-        {
-              customer.IsActive = true;
-            if (ModelState.IsValid)
-            {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customer);
-        }
+    [HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(Customer customer)
+{
+
+    bool emailExists = await _context.Customers
+        .AnyAsync(c => c.Email == customer.Email);
+
+    if (emailExists)
+    {
+        ModelState.AddModelError(
+            "Email",
+            "A customer with this email already exists."
+        );
+    }
+
+    if (!ModelState.IsValid)
+    {
+        return View(customer);
+    }
+
+    _context.Customers.Add(customer);
+   try
+{
+    _context.Customers.Add(customer);
+    await _context.SaveChangesAsync();
+}
+catch (DbUpdateException)
+{
+    ModelState.AddModelError(
+        "Email",
+        "This email address is already in use."
+    );
+    return View(customer);
+}
+
+
+    return RedirectToAction(nameof(Index));
+}
+
 
 
         public async Task<IActionResult> Edit(int? id)

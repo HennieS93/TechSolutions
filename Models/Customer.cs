@@ -7,20 +7,27 @@ namespace TechSolutions.Web.Models
         public int ID { get; set; }
 
         [Required, StringLength(100)]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; } = null!;
 
         [Required, StringLength(100)]
-        public string SurName { get; set; } = null!;
+        [Display(Name = "Surname")]
+         public string SurName { get; set; } = string.Empty;
 
         [Required, EmailAddress]
         public string Email { get; set; } = null!;
 
         
-        [DataType(DataType.Date)]
-        public DateTime? DateOfBirth { get; set; }
+      [DataType(DataType.Date)]
+[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+public DateTime DateOfBirth { get; set; }
 
-        [Phone]
-        public string? Phone { get; set; }
+
+      [Required]
+[Phone]
+[StringLength(10, MinimumLength = 10, ErrorMessage = "Phone number must be exactly 10 digits.")]
+public string? Phone { get; set; }
+
 
         public bool IsActive { get; set; }
 

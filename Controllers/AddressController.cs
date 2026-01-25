@@ -16,7 +16,6 @@ namespace TechSolutions.Web.Controllers
             _context = context;
         }
 
-        // GET: Addresses/ByCustomer/5
         public async Task<IActionResult> ByCustomer(int customerId)
         {
             var addresses = await _context.Addresses
@@ -27,14 +26,13 @@ namespace TechSolutions.Web.Controllers
             return View(addresses);
         }
 
-        // GET: Addresses/Create
+
         public IActionResult Create(int customerId)
         {
             ViewBag.CustomerID = customerId;
             return View(new Address { CustomerID = customerId });
         }
 
-        // POST: Addresses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Address address)
@@ -49,16 +47,20 @@ namespace TechSolutions.Web.Controllers
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var address = await _context.Addresses.FindAsync(id);
-            if (address == null)
-                return NotFound();
+      [HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Delete(int id)
+{
+    var address = await _context.Addresses.FindAsync(id);
+    if (address == null)
+        return NotFound();
 
-            await _context.SaveChangesAsync();
+    _context.Addresses.Remove(address);
+    await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(ByCustomer), new { customerId = address.CustomerID });
-        }
+    return RedirectToAction(nameof(ByCustomer),
+        new { customerId = address.CustomerID });
+}
+
     }
 }

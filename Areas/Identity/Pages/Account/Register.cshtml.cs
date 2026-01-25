@@ -35,33 +35,46 @@ public class RegisterModel : PageModel
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 
-    public async Task<IActionResult> OnPostAsync()
+   public async Task<IActionResult> OnPostAsync(string returnUrl)
+{
+    returnUrl ??= Url.Content("~/");
+
+    if (!ModelState.IsValid)
     {
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
-
-        var user = new IdentityUser
-        {
-            UserName = Input.Email,
-            Email = Input.Email,
-            EmailConfirmed = true
-        };
-
-        var result = await _userManager.CreateAsync(user, Input.Password);
-
-        if (result.Succeeded)
-        {
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return RedirectToPage("/Account/Login");
-        }
-
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-
         return Page();
     }
+
+    var existingUser = await _userManager.FindByEmailAsync(Input.Email);
+    if (existingUser != null)
+    {
+        ModelState.AddModelError(
+            nameof(Input.Email),
+            "An account with this email already exists."
+        );
+        return Page();
+    }
+
+    var user = new IdentityUser
+    {
+        UserName = Input.Email,
+        Email = Input.Email,
+        EmailConfirmed = true
+    };
+
+    var result = await _userManager.CreateAsync(user, Input.Password);
+
+    if (result.Succeeded)
+    {
+        await _signInManager.SignInAsync(user, isPersistent: false);
+        return Redirect(returnUrl);
+    }
+
+    foreach (var error in result.Errors)
+    {
+        ModelState.AddModelError(string.Empty, error.Description);
+    }
+
+    return Page();
+}
+
 }

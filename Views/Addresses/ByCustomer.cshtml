@@ -2,11 +2,20 @@
 
 <h3>Addresses</h3>
 
-<a asp-action="Create"
-   asp-route-customerId="@ViewBag.CustomerID"
-   class="btn btn-primary mb-3">
-    Add Address
-</a>
+<div class="d-flex justify-content-between mb-3">
+    <a asp-controller="Customers"
+       asp-action="Index"
+       class="btn btn-secondary">
+        ← Back to Customers
+    </a>
+
+    <a asp-action="Create"
+       asp-controller="Addresses"
+       asp-route-customerId="@ViewBag.CustomerID"
+       class="btn btn-primary">
+        + Add Address
+    </a>
+</div>
 
 <table class="table table-hover">
     <thead>
@@ -14,7 +23,7 @@
             <th>Line 1</th>
             <th>City</th>
             <th>Postal Code</th>
-            <th></th>
+            <th class="text-end">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -24,10 +33,21 @@
             <td>@a.AddressLine1</td>
             <td>@a.City</td>
             <td>@a.PostalCode</td>
-            <td>
-                <form asp-action="Delete" method="post">
+            <td class="text-end">
+                <form asp-action="Delete"
+                      asp-controller="Addresses"
+                      method="post"
+                      class="d-inline">
+
+                    @Html.AntiForgeryToken()
+
                     <input type="hidden" name="id" value="@a.ID" />
-                    <button class="btn btn-sm btn-danger">Delete</button>
+
+                    <button type="submit"
+                            class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this address?');">
+                        Delete
+                    </button>
                 </form>
             </td>
         </tr>
